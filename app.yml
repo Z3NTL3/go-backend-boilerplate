@@ -1,0 +1,10 @@
+debug: true
+
+app_name: "My Boilerplate for Gin"
+port: 2000
+
+production:
+  stripe_key: 
+
+development:
+  stripe_key: "test secret key"

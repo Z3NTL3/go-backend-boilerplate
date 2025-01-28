@@ -3,6 +3,8 @@ debug: true
 app_name: "My Boilerplate for Go Backend services"
 port: 2000
 
+csrf_token: "32-byte-long-auth-key"
+
 production:
   stripe_key: 
 

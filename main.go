@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"z3ntl3/go-backend-boilerplate/config"
@@ -14,11 +15,14 @@ import (
 	"github.com/spf13/viper"
 	"github.com/stripe/stripe-go/v81/client"
 
+	_ "z3ntl3/go-backend-boilerplate/server/routes/api"
 	_ "z3ntl3/go-backend-boilerplate/server/routes/docs"
 )
 
 func main() {
 	config.ExpandEnv()
+
+	views := template.Must(template.New("views").ParseGlob("views/**/*.html"))
 
 	docs.SwaggerInfo.BasePath = "/api/v1"
 	docs.SwaggerInfo.Title = "API"
@@ -29,6 +33,7 @@ func main() {
 		Router{
 		Mux:       chi.NewRouter(),
 		StripeSDK: &stripesdk.StripeSDK{API: &client.API{}},
+		Templates: views,
 	}).Bootstrap()
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", viper.GetInt("port")), app))

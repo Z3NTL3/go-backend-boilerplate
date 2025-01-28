@@ -1,6 +1,7 @@
 package server
 
 import (
+	"html/template"
 	"z3ntl3/go-backend-boilerplate/config"
 	stripesdk "z3ntl3/go-backend-boilerplate/stripe_sdk"
 
@@ -11,6 +12,7 @@ import (
 type Router struct {
 	*chi.Mux
 	*stripesdk.StripeSDK
+	Templates *template.Template
 }
 
 type Registry func(*Router)

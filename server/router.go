@@ -1,54 +1,32 @@
 package server
 
 import (
-	"net/http"
+	"z3ntl3/go-backend-boilerplate/config"
+	stripesdk "z3ntl3/go-backend-boilerplate/stripe_sdk"
 
-	"z3ntl3/boilerplate-gin/config"
-	stripesdk "z3ntl3/boilerplate-gin/stripe_sdk"
-
-	"github.com/gin-gonic/gin"
+	"github.com/go-chi/chi"
 	"github.com/spf13/viper"
 )
 
 type Router struct {
-	*gin.Engine
+	*chi.Mux
 	*stripesdk.StripeSDK
 }
 
-type Route struct {
-	method   string
-	path     string
-	handlers []gin.HandlerFunc
-}
+type Registry func(*Router)
 
-var Routes []Route = []Route{}
+var RegistryList = []Registry{}
 
-func init() {
-	Routes = append(Routes, []Route{
-		{
-			method: http.MethodGet,
-			path:   "/docs",
-			handlers: []gin.HandlerFunc{
-				func(ctx *gin.Context) {
-					ctx.Redirect(301, "/api/index.html")
-				},
-			},
-		},
-	}...)
-}
-
-func (app *Router) Bootstrap() *Router {
-	for _, route := range Routes {
-		app.Handle(route.method, route.path, route.handlers...)
+func (r *Router) Bootstrap() *Router {
+	for _, registry := range RegistryList {
+		registry(r)
 	}
 
-	appMode := config.Development
+	key := viper.GetStringMapString(config.Production)[config.StripeKey]
 	if viper.GetBool(config.DebugMode) {
-		appMode = config.Production
+		key = viper.GetStringMapString(config.Development)[config.StripeKey]
 	}
 
-	var key string = viper.GetStringMapString(appMode)[config.StripeKey]
-	app.StripeSDK.Init(key, nil)
-
-	return app
+	r.StripeSDK.Init(key, nil)
+	return r
 }

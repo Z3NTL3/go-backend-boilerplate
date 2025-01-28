@@ -1,6 +1,6 @@
 debug: true
 
-app_name: "My Boilerplate for Gin"
+app_name: "My Boilerplate for Go Backend services"
 port: 2000
 
 production:

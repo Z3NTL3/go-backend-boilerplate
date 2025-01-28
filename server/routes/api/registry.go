@@ -19,7 +19,7 @@ func Register(router *server.Router) {
 		r1.Use(csrf.Protect([]byte(viper.GetString("csrf_token"))))
 		r1.Route("/api/v1", func(r2 chi.Router) {
 			r2.Get("/echo", func(w http.ResponseWriter, r *http.Request) {
-				tempOut := bytes.NewBufferString("")
+				tempOut := &bytes.Buffer{}
 				err := router.Templates.ExecuteTemplate(tempOut, "login.html", map[string]string{"text": "hello world"})
 				if err != nil {
 					w.Write([]byte("some error"))
